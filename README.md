@@ -9,24 +9,56 @@
 
 ```
 project_root/
-├── main.py         # Веб приложение показывающее странику "Контакты"
-├── catalog.html    # Страница "Каталог"
-├── category/html   # Страница "Категории"
-├── contacts.html   # Страница "Контакты"
-├── home.html       # Страница "Главная"
-└── orders.html     # Страница "Заказы"
-
-
+├── catalog/                # Приложение каталога
+│   ├── __init__.py
+│   ├── admin.py            # (Пока не используется)
+│   ├── apps.py
+│   ├── models.py           # (Пока не используется)
+│   ├── tests.py            # (Пока не используется)
+│   ├── urls.py             # URL-маршрутизатор приложения
+│   ├── views.py
+│   ├── migrations/
+│   │   └── __init__.py
+│   └── templates/
+│       ├── catalog.html    # Страница "Каталог"
+│       ├── category.html   # Страница "Категории"
+│       ├── contacts.html   # Страница "Контакты" (с формой обратной связи)
+│       ├── home.html       # Страница "Главная"
+│       └── orders.html     # Страница "Заказы"
+├── config/                 # Основной модуль Django-проекта
+│   ├── __init__.py       
+│   ├── asgi.py          
+│   ├── settings.py         # Основные настройки приложения
+│   ├── urls.py             # Основной URL-маршрутизатор
+│   └── wsgi.py   
+├── .flake8
+├── .gitignore      
+├── main.py     
+├── manage.py      
+├── poetry.lock      
+├── poetry.toml
+├── pyproject.toml
+└── README.md 
 ```
 
 ---
 
 ## Для использования его функционала необходимо:
-1. Установить зависимости:  
+1. Установить poetry:  
+   ```bash
+   poetry install
+   ```
+2. Установите зависимости:
    ```bash
    poetry add requests
    ```
+3. Запустите локальный сервер разработки:
+   ```bash
+   poetry run python manage.py runserver
+   ```
+4. Перейдите в браузере по адресу `http://127.0.0.1:8000/`.
 
+---
 ---
 
 ## Требования к окружению
