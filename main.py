@@ -9,12 +9,12 @@ serverPort = 8080  # Порт для доступа по сети
 
 class MyServer(BaseHTTPRequestHandler):
     """
-        Специальный класс, который отвечает за
-        обработку входящих запросов от клиентов
+    Специальный класс, который отвечает за
+    обработку входящих запросов от клиентов
     """
 
     def do_GET(self):
-        """ Метод для обработки входящих GET-запросов """
+        """Метод для обработки входящих GET-запросов"""
         self.send_response(200)  # Отправка кода ответа
         self.send_header("Content-type", "text/html")  # Изменён Content-type
         self.end_headers()  # Завершение формирования заголовков ответа
@@ -27,9 +27,9 @@ class MyServer(BaseHTTPRequestHandler):
         self.wfile.write(bytes(html_content, "utf-8"))
 
     def do_POST(self):
-        """ Метод для обработки входящих POST-запросов """
+        """Метод для обработки входящих POST-запросов"""
         # Определяем длину тела запроса
-        content_length = int(self.headers['Content-Length'])
+        content_length = int(self.headers["Content-Length"])
 
         # Читаем тело запроса
         post_data = self.rfile.read(content_length)
