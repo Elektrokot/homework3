@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 
-{% block title %}Главная{% endblock %}
+{% block title %}{{ category.name }}{% endblock %}
 
 {% block content %}
-<h1 class="text-center fw-bold mt-5">Главная</h1>
-<p class="text-center text-secondary-emphasis mt-3">Вы находитесь на сайте, предназначенном для продажи товаров.</p>
+<h1 class="text-center fw-bold mt-5">{{ category.name }}</h1>
+<p class="text-center text-secondary-emphasis mt-3">{{ category.description }}</p>
 
 <div class="row mt-3">
     {% for product in page_obj %}
@@ -24,7 +24,7 @@
         </div>
     </div>
     {% empty %}
-    <p>Нет товаров для отображения.</p>
+    <p>В этой категории нет товаров.</p>
     {% endfor %}
 </div>
 
