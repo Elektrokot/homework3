@@ -11,6 +11,10 @@ python = "^3.13"
 pytest-cov = ">=6.1.1,<7.0.0"
 poetry-core = ">=2.0.0"
 django = "^6.0"
+pillow = "^12.0.0"
+ipython = "^9.8.0"
+psycopg2-binary = "^2.9.11"
+python-dotenv = "^1.2.1"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.4.0"

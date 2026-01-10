@@ -92,8 +92,14 @@
 
                         <div class="col-5 mt-5">
                             <h2>Наши контакты</h2>
-                            <p>Здесь что-то написано.</p>
-                            <p>И здесь тоже что-то написано.</p>
+                            {% if contact_info %}
+                            <p><strong>Адрес:</strong> {{ contact_info.address }}</p>
+                            <p><strong>Телефон:</strong> {{ contact_info.phone }}</p>
+                            <p><strong>Email:</strong> {{ contact_info.email }}</p>
+                            <p><strong>Время работы:</strong> {{ contact_info.working_hours }}</p>
+                            {% else %}
+                            <p>Контактная информация отсутствует.</p>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
