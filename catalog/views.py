@@ -85,3 +85,16 @@ class AddProductView(CreateView):
     form_class = ProductForm
     template_name = 'add_product.html'
     success_url = reverse_lazy('catalog:home')
+
+
+class ProductUpdateView(UpdateView):
+    model = Product
+    form_class = ProductForm
+    template_name = 'add_product.html'
+    success_url = reverse_lazy('catalog:home')
+
+# --- Удалить товар ---
+class ProductDeleteView(DeleteView):
+    model = Product
+    template_name = 'confirm_delete.html'
+    success_url = reverse_lazy('catalog:home')

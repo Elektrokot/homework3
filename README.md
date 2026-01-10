@@ -16,7 +16,9 @@
 - **Новое:** Фильтрация опубликованных статей.
 - **Новое:** Перенаправление после редактирования статьи.
 - **Новое:** Управление статьями через админ-панель.
-
+- **Новое:** CRUD для продуктов с использованием `django.forms`.
+- **Новое:** Валидация форм: запрещённые слова, отрицательная цена, формат и размер изображения.
+- **Новое:** Стилизация форм с использованием Bootstrap.
 ---
 
 ## Структура проекта
@@ -36,7 +38,7 @@ project_root/
 │   ├── models.py             # Модели: Product, Category, Contact
 │   ├── tests.py              # (Пока не используется)
 │   ├── urls.py               # URL-маршрутизатор приложения (namespace='catalog')
-│   ├── views.py              # Контроллеры: HomeView, ContactsView, ProductDetailView, CatalogView, CategoryListView, CategoryDetailView, OrdersView, AddProductView
+│   ├── views.py              # Контроллеры: HomeView, ContactsView, ProductDetailView, CatalogView, CategoryListView, CategoryDetailView, OrdersView, AddProductView, ProductUpdateView, ProductDeleteView
 │   ├── management/
 │   │   ├── __init__.py
 │   │   └── commands/
@@ -54,7 +56,8 @@ project_root/
 │       ├── category.html     # Страница списка категорий
 │       ├── category_detail.html # Страница товаров по категории
 │       ├── orders.html       # Страница заказов (заглушка)
-│       └── add_product.html  # Форма добавления товара
+│       ├── add_product.html  # Форма добавления товара
+│       └── confirm_delete.html # Подтверждение удаления товара
 ├── blog/                    # Приложение блога
 │   ├── __init__.py
 │   ├── admin.py              # Регистрация модели BLOG
