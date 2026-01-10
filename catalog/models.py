@@ -1,6 +1,6 @@
 from django.db import models
 
-# Create your models here.
+
 class Category(models.Model):
     name = models.CharField(max_length=100, verbose_name="Наименование")
     description = models.TextField(verbose_name="Описание")
@@ -9,8 +9,8 @@ class Category(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = 'Category'
-        verbose_name_plural = 'Categories'
+        verbose_name = 'Категория'
+        verbose_name_plural = 'Категории'
         ordering = ['name']
 
 
@@ -27,8 +27,8 @@ class Product(models.Model):
         return self.title
 
     class Meta:
-        verbose_name = 'Product'
-        verbose_name_plural = 'Products'
+        verbose_name = 'Продукт'
+        verbose_name_plural = 'Продукты'
         ordering = ['title']
 
 
