@@ -17,7 +17,7 @@ class HomeView(TemplateView):
             print(f"Product: {product.title}, Price: {product.price}, Created: {product.created_at}")
         all_products = Product.objects.all()
         paginator = Paginator(all_products, 6)
-        page_number = self.request.GET.get('page')
+        page_number = self.request.GET.get('page', '1')
         page_obj = paginator.get_page(page_number)
         context['page_obj'] = page_obj
         return context
@@ -84,4 +84,17 @@ class AddProductView(CreateView):
     model = Product
     form_class = ProductForm
     template_name = 'add_product.html'
+    success_url = reverse_lazy('catalog:home')
+
+
+class ProductUpdateView(UpdateView):
+    model = Product
+    form_class = ProductForm
+    template_name = 'add_product.html'
+    success_url = reverse_lazy('catalog:home')
+
+# --- Удалить товар ---
+class ProductDeleteView(DeleteView):
+    model = Product
+    template_name = 'confirm_delete.html'
     success_url = reverse_lazy('catalog:home')
