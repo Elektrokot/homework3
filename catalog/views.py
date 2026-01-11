@@ -1,84 +1,87 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from catalog.models import Product, Contact, Category
-from django import forms
 from django.core.paginator import Paginator
+from django.shortcuts import get_object_or_404
+from django.urls import reverse_lazy
+from django.views.generic import ListView, DetailView, TemplateView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from catalog.models import Product, Contact, Category
+from .forms import ProductForm
 
-def home(request):
-    latest_products = Product.objects.all().order_by('-created_at')[:5]
-    for product in latest_products:
-        print(f"Product: {product.title}, Price: {product.price}, Created: {product.created_at}")
 
-    all_products = Product.objects.all().order_by('-created_at')
-    paginator = Paginator(all_products, 6)  # 6 товаров на страницу
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+class HomeView(TemplateView):
+    template_name = 'home.html'
 
-    return render(request, 'home.html', {'page_obj': page_obj})
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        latest_products = Product.objects.all().order_by('-created_at')[:5]
+        for product in latest_products:
+            print(f"Product: {product.title}, Price: {product.price}, Created: {product.created_at}")
+        all_products = Product.objects.all()
+        paginator = Paginator(all_products, 6)
+        page_number = self.request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        context['page_obj'] = page_obj
+        return context
 
-def contacts(request):
-    contact_info = Contact.objects.first()
-    success_message = None
-    if request.method == 'POST':
-        name = request.POST.get('name')
-        email = request.POST.get('email')
-        message = request.POST.get('message')
-        success_message = "Сообщение успешно отправлено!"
 
-    return render(request, 'contacts.html', {
-        'success_message': success_message,
-        'contact_info': contact_info
-    })
+class ContactsView(TemplateView):
+    template_name = 'contacts.html'
 
-def catalog(request):
-    all_products = Product.objects.all().order_by('-created_at')
-    paginator = Paginator(all_products, 6)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['contact_info'] = Contact.objects.first()
+        success_message = None
+        if self.request.method == 'POST':
+            name = self.request.POST.get('name')
+            email = self.request.POST.get('email')
+            message = self.request.POST.get('message')
+            success_message = "Сообщение успешно отправлено!"
+        context['success_message'] = success_message
+        return context
 
-    return render(request, 'catalog.html', {'page_obj': page_obj})
 
-def category(request):
-    categories = Category.objects.all()
-    return render(request, 'category.html', {'categories': categories})
+class ProductDetailView(DetailView):
+    model = Product
+    template_name = 'product_detail.html'
+    context_object_name = 'product'
 
-def orders(request):
-    return render(request, 'orders.html')
 
-def product_detail(request, pk):
-    product = get_object_or_404(Product, pk=pk)
-    return render(request, 'product_detail.html', {'product': product})
+class CatalogView(ListView):
+    model = Product
+    template_name = 'catalog.html'
+    context_object_name = 'page_obj'
+    paginate_by = 6
 
-class ProductForm(forms.ModelForm):
-    class Meta:
-        model = Product
-        fields = ['title', 'description', 'image', 'category', 'price']
-        widgets = {
-            'title': forms.TextInput(attrs={'class': 'form-control'}),
-            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
-            'image': forms.FileInput(attrs={'class': 'form-control'}),
-            'category': forms.Select(attrs={'class': 'form-control'}),
-            'price': forms.NumberInput(attrs={'class': 'form-control'}),
-        }
+    def get_queryset(self):
+        return Product.objects.all().order_by('-created_at')
 
-def add_product(request):
-    if request.method == 'POST':
-        form = ProductForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('catalog:home')
-    else:
-        form = ProductForm()
 
-    return render(request, 'add_product.html', {'form': form})
+class CategoryListView(ListView):
+    model = Category
+    template_name = 'category.html'
+    context_object_name = 'categories'
 
-def category_detail(request, pk):
-    category = get_object_or_404(Category, pk=pk)
-    products = Product.objects.filter(category=category).order_by('-created_at')
-    paginator = Paginator(products, 6)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+class CategoryDetailView(ListView):
+    template_name = 'category_detail.html'
+    context_object_name = 'page_obj'
+    paginate_by = 6
 
-    return render(request, 'category_detail.html', {
-        'category': category,
-        'page_obj': page_obj
-    })
+    def get_queryset(self):
+        category = get_object_or_404(Category, pk=self.kwargs['pk'])
+        return Product.objects.filter(category=category).order_by('-created_at')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        category = get_object_or_404(Category, pk=self.kwargs['pk'])
+        context['category'] = category
+        return context
+
+
+class OrdersView(TemplateView):
+    template_name = 'orders.html'
+
+
+class AddProductView(CreateView):
+    model = Product
+    form_class = ProductForm
+    template_name = 'add_product.html'
+    success_url = reverse_lazy('catalog:home')
