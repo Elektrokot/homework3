@@ -2,8 +2,9 @@ from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from .models import BlogPost
+from .forms import BlogPostForm
 
-# Create your views here.
+
 class BlogPostListView(ListView):
     model = BlogPost
     template_name = 'list.html'
@@ -25,13 +26,13 @@ class BlogPostDetailView(DetailView):
 
 class BlogPostCreateView(CreateView):
     model = BlogPost
-    fields = ['title', 'content', 'preview', 'published']
+    form_class = BlogPostForm
     template_name = 'form.html'
     success_url = reverse_lazy('blog:blog_list')
 
 class BlogPostUpdateView(UpdateView):
     model = BlogPost
-    fields = ['title', 'content', 'preview', 'published']
+    form_class = BlogPostForm
     template_name = 'form.html'
 
     def get_success_url(self):
