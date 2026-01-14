@@ -18,6 +18,7 @@
      <a href="{% url 'catalog:orders' %}" class="btn btn-dark w-100 text-start mb-2">
         <h5>Заказы</h5>
      </a>
+
      <a href="{% url 'catalog:catalog' %}" class="btn btn-dark w-100 text-start mb-2">
         <h5>Каталог</h5>
      </a>
@@ -26,17 +27,34 @@
         <h5>Контакты</h5>
      </a>
 
-    <a href="{% url 'blog:blog_list' %}" class="btn btn-dark w-100 text-start mb-2">
+     <a href="{% url 'blog:blog_list' %}" class="btn btn-dark w-100 text-start mb-2">
         <h5>Блог</h5>
-    </a>
+     </a>
 
-     <div class="dropdown">
-        <button class="btn btn-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Пользователь
-        </button>
-        <ul class="dropdown-menu dropdown-menu-dark w-100" aria-labelledby="userDropdown">
-            <li><a class="dropdown-item mb-2"><h6>Профиль</h6></a></li>
-            <li><a class="dropdown-item mb-2"><h6>Выход</h6></a></li>
-        </ul>
-     </div>
+     {% if user.is_authenticated %}
+         <!-- Кнопки для авторизованного пользователя -->
+         <a href="{% url 'users:profile_edit' %}" class="btn btn-secondary w-100 text-start mb-2">
+            <h5>Профиль</h5>
+         </a>
+
+         <a href="{% url 'catalog:add_product' %}" class="btn btn-secondary w-100 text-start mb-2">
+            <h5>Добавить товар</h5>
+         </a>
+
+         <form method="post" action="{% url 'users:logout' %}" style="display:inline;">
+             {% csrf_token %}
+             <button type="submit" class="btn btn-danger w-100 text-start mb-2">
+                <h5>Выход</h5>
+             </button>
+         </form>
+     {% else %}
+         <!-- Кнопки для неавторизованного пользователя -->
+         <a href="{% url 'users:login' %}" class="btn btn-secondary w-100 text-start mb-2">
+            <h5>Войти</h5>
+         </a>
+
+         <a href="{% url 'users:register' %}" class="btn btn-secondary w-100 text-start mb-2">
+            <h5>Регистрация</h5>
+         </a>
+     {% endif %}
 </div>
