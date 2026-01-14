@@ -45,6 +45,19 @@ class ProductDetailView(DetailView):
     template_name = 'product_detail.html'
     context_object_name = 'product'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        product = self.get_object()
+        user = self.request.user
+
+        # Проверяем, является ли пользователь владельцем или модератором
+        is_owner = product.owner == user
+        is_moderator = user.groups.filter(name='Модератор продуктов').exists()
+
+        context['is_owner'] = is_owner
+        context['is_moderator'] = is_moderator
+        return context
+
 
 class CatalogView(ListView):
     model = Product
@@ -87,6 +100,10 @@ class AddProductView(LoginRequiredMixin, CreateView):
     template_name = 'add_product.html'
     success_url = reverse_lazy('catalog:home')
 
+    def form_valid(self, form):
+        form.instance.owner = self.request.user  # устанавливаем владельца
+        return super().form_valid(form)
+
 
 class ProductUpdateView(LoginRequiredMixin, UpdateView):
     model = Product
@@ -94,8 +111,20 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
     template_name = 'add_product.html'
     success_url = reverse_lazy('catalog:home')
 
+    def get_queryset(self):
+        user = self.request.user  # Владельцы могут редактировать свои продукты
+        if user.has_perm('catalog.can_unpublish_product'):  # Модераторы могут редактировать любые продукты
+            return Product.objects.all()
+        return Product.objects.filter(owner=user)  # Владельцы могут редактировать только свои
+
 # --- Удалить товар ---
 class ProductDeleteView(LoginRequiredMixin, DeleteView):
     model = Product
     template_name = 'confirm_delete.html'
     success_url = reverse_lazy('catalog:home')
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.groups.filter(name='Модератор продуктов').exists(): # Владелец или модератор могут удалять
+            return Product.objects.all()
+        return Product.objects.filter(owner=user)

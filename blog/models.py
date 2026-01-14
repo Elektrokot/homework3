@@ -1,6 +1,9 @@
 from django.db import models
+from django.contrib.auth import get_user_model
 
-# Create your models here.
+User = get_user_model()
+
+
 class BlogPost(models.Model):
     title = models.CharField(max_length=200, verbose_name="Заголовок")
     content = models.TextField(verbose_name="Содержимое")
@@ -8,6 +11,7 @@ class BlogPost(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
     published = models.BooleanField(default=True, verbose_name="Опубликовано")
     views_count = models.PositiveIntegerField(default=0, verbose_name="Количество просмотров")
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Владелец")
 
     def __str__(self):
         return self.title
@@ -16,3 +20,4 @@ class BlogPost(models.Model):
         verbose_name = "Запись"
         verbose_name_plural = "Записи"
         ordering = ['-created_at']
+        permissions = [("can_unpublish_blog_post", "может управлять блогом"),]
