@@ -16,15 +16,10 @@ class RegisterView(CreateView):
     def form_valid(self, form):
         user = form.save()
         login(self.request, user)
-        self.send_welcome_email(user.email)
+        user.email_user(
+            subject='Добро пожаловать в наш интернет-магазин!',
+            message='Спасибо, что зарегистрировались в нашем сервисе!')
         return super().form_valid(form)
-
-    def send_welcome_email(self, user_email):
-        subject = 'Добро пожаловать в наш интернет-магазин!'
-        message = 'Спасибо, что зарегистрировались в нашем сервисе!'
-        from_email = settings.DEFAULT_FROM_EMAIL
-        recipient_list = [user_email]
-        send_mail(subject, message, from_email, recipient_list)
 
 
 class ProfileEditView(LoginRequiredMixin, UpdateView):
