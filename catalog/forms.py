@@ -34,7 +34,7 @@ def validate_image(value):
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ['title', 'description', 'image', 'category', 'price']
+        fields = ['title', 'description', 'image', 'category', 'price', 'status']
 
     def __init__(self, *args, **kwargs):
         super(ProductForm, self).__init__(*args, **kwargs)
@@ -60,6 +60,10 @@ class ProductForm(forms.ModelForm):
         self.fields['price'].widget.attrs.update({
             'class': 'form-control',
             'placeholder': 'Укажите цену',
+        })
+
+        self.fields['status'].widget.attrs.update({
+            'class': 'form-select',
         })
 
     def clean_title(self):

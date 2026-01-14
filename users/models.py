@@ -1,5 +1,19 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, BaseUserManager
+
+
+class CustomUserManager(BaseUserManager):
+    def create_superuser(self, email, password=None, **extra_fields):
+        if not email:
+            raise ValueError('Email обязателен')
+        email = self.normalize_email(email)
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
 
 
 class CustomUser(AbstractUser):
@@ -9,7 +23,9 @@ class CustomUser(AbstractUser):
     country = models.CharField(max_length=50, verbose_name="Страна", blank=True, null=True)
 
     USERNAME_FIELD = 'email'  # Используем email вместо username
-    REQUIRED_FIELDS = ['username']  # username остаётся обязательным для суперпользователя
+    REQUIRED_FIELDS = []  # Удалил username
+
+    objects = CustomUserManager()
 
     def __str__(self):
         return self.email

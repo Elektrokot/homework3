@@ -1,8 +1,6 @@
 from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView, UpdateView
-from django.core.mail import send_mail
 from django.contrib.auth import login
-from django.conf import settings
 from .forms import CustomUserCreationForm, CustomUserChangeForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import CustomUser
@@ -16,7 +14,7 @@ class RegisterView(CreateView):
     def form_valid(self, form):
         user = form.save()
         login(self.request, user)
-        user.email_user(
+        user.email_user(           # Использовал функцию email_user
             subject='Добро пожаловать в наш интернет-магазин!',
             message='Спасибо, что зарегистрировались в нашем сервисе!')
         return super().form_valid(form)
