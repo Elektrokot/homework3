@@ -6,6 +6,23 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from catalog.models import Product, Contact, Category
 from .forms import ProductForm
 from django.contrib.auth.mixins import LoginRequiredMixin
+from .services import ProductService
+
+
+class ProductsByCategoryView(ListView):
+    template_name = 'products_by_category.html'
+    context_object_name = 'products'
+    paginate_by = 6
+
+    def get_queryset(self):
+        category_id = self.kwargs['category_id']
+        return ProductService.get_products_by_category(category_id)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        category = get_object_or_404(Category, pk=self.kwargs['category_id'])
+        context['category'] = category
+        return context
 
 
 class HomeView(TemplateView):
@@ -39,7 +56,7 @@ class ContactsView(TemplateView):
         context['success_message'] = success_message
         return context
 
-
+# --- Детальное описание продукта ---
 class ProductDetailView(DetailView):
     model = Product
     template_name = 'product_detail.html'
@@ -62,7 +79,7 @@ class ProductDetailView(DetailView):
 class CatalogView(ListView):
     model = Product
     template_name = 'catalog.html'
-    context_object_name = 'page_obj'
+    context_object_name = 'products'
     paginate_by = 6
 
     def get_queryset(self):
@@ -73,10 +90,14 @@ class CategoryListView(ListView):
     model = Category
     template_name = 'category.html'
     context_object_name = 'categories'
+    paginate_by = 6
+
+    def get_queryset(self):
+        return Category.objects.all().order_by('name')
 
 class CategoryDetailView(ListView):
     template_name = 'category_detail.html'
-    context_object_name = 'page_obj'
+    context_object_name = 'products'
     paginate_by = 6
 
     def get_queryset(self):
@@ -93,7 +114,7 @@ class CategoryDetailView(ListView):
 class OrdersView(TemplateView):
     template_name = 'orders.html'
 
-
+# --- Добавить товар ---
 class AddProductView(LoginRequiredMixin, CreateView):
     model = Product
     form_class = ProductForm
@@ -104,7 +125,7 @@ class AddProductView(LoginRequiredMixin, CreateView):
         form.instance.owner = self.request.user  # устанавливаем владельца
         return super().form_valid(form)
 
-
+# --- Обновить товар ---
 class ProductUpdateView(LoginRequiredMixin, UpdateView):
     model = Product
     form_class = ProductForm

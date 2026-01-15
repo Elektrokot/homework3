@@ -56,10 +56,12 @@ class BlogPostUpdateView(LoginRequiredMixin, UpdateView):
         return reverse_lazy('blog:blog_detail', kwargs={'pk': self.object.pk})
 
     def get_queryset(self):
+        qs = super().get_queryset()
         user = self.request.user
-        if user.groups.filter(name='Контент-менеджер').exists(): # Если пользователь в группе "Контент-менеджер", он может редактировать все
-            return BlogPost.objects.all()
-        return BlogPost.objects.filter(owner=user)  # Иначе — только свои
+        if not user.groups.filter(name='Контент-менеджер').exists(): # Может редактировать все
+            qs = qs.filter(owner=user)
+        return qs  # Иначе — только свои
+
 
 class BlogPostDeleteView(LoginRequiredMixin, DeleteView):
     model = BlogPost
@@ -67,7 +69,8 @@ class BlogPostDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('blog:blog_list')
 
     def get_queryset(self):
+        qs = super().get_queryset()
         user = self.request.user
-        if user.groups.filter(name='Контент-менеджер').exists():  # Если пользователь в группе "Контент-менеджер", он может удалять все
-            return BlogPost.objects.all()
-        return BlogPost.objects.filter(owner=user)  # Иначе — только свои
+        if user.groups.filter(name='Контент-менеджер').exists():  # Может удалять все
+            return qs
+        return qs.filter(owner=user)  # Иначе — только свои

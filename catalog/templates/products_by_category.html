@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Продукты в категории {{ category.name }}{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h2 class="text-center">Продукты в категории: {{ category.name }}</h2>
+        <div class="row mt-3">
+            {% for product in products %}
+            <div class="col-4">
+                <div class="card">
+                  <div class="card-header">
+                    <h2 class="text-center">{{ product.title }}</h2>
+                  </div>
+                  <div class="card-body">
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.title }}" class="card-img-top">
+                    {% endif %}
+                    <h3 class="card-title text-center">{{ product.price }}</h3>
+                    <p class="card-text text-center">{{ product.description|truncatechars:100 }}</p>
+                    <a href="{% url 'catalog:product_detail' product.pk %}" class="btn btn-outline-primary w-100">Подробнее</a>
+                  </div>
+                </div>
+            </div>
+            {% empty %}
+            <p>В этой категории нет товаров.</p>
+            {% endfor %}
+        </div>
+        {% include 'pagination.html' %}
+    </div>
+{% endblock %}
